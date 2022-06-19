@@ -5,44 +5,64 @@ function computerPlay() {
 }
 
 function playRound(playerSelection, computerSelection) {
-    console.log(`player: ${playerSelection} computer: ${computerSelection}`);
+    const result = document.querySelector('.result');
+    const playerScoreDisplay = document.querySelector('#playerScore');
+    const computerScoreDisplay = document.querySelector('#computerScore');
+    
+
     if (playerSelection === computerSelection) {
-        console.log('Draw!');
+        result.textContent = `DRAW! - Player: ${playerSelection}  Computer: ${computerSelection}`;    
     }
     else if (
         (playerSelection === 'Rock' && computerSelection === 'Scissors') ||
         (playerSelection === 'Paper' && computerSelection === 'Rock') ||
         (playerSelection === 'Scissors' && computerSelection === 'Paper')
     ) {
-        console.log(`You Won! ${playerSelection} beats ${computerSelection}`);
+        result.textContent = `YOU WON! - Player: ${playerSelection}  Computer: ${computerSelection}`;
         playerScore++;
+        playerScoreDisplay.textContent = playerScore;
     }
     else {
-        console.log(`You Lose! ${computerSelection} beats ${playerSelection}`);
+        result.textContent = `YOU LOST! - Player: ${playerSelection}  Computer: ${computerSelection}`;
         computerScore++;
+        computerScoreDisplay.textContent = computerScore;
     }
 }
 
-function game() {
-    for (let i = 0; i < 5; i++) {
-        let computerSelection = computerPlay();
-        let playerSelection = capitalise(prompt('Please enter Rock, Paper, or Scissors'));
-        playRound(playerSelection, computerSelection);
-    }
-    console.log('******************')
-    console.log(`Player: ${playerScore} Computer: ${computerScore}`);
-    if(playerScore > computerScore) {
-        console.log('CONGRATURATIONS! YOU WON!');
-    } else if (playerScore < computerScore) {
-        console.log('OH NO! YOU LOST!');
-    } else {
-        console.log('TIE GAME!')
-    }
-}
-
-let playerScore = 0;
 let computerScore = 0;
-game();
+let playerScore = 0;
+
+const buttons = document.querySelectorAll('.btn');
+buttons.forEach(btn => btn.addEventListener('click', function () {
+    let player = `${this.dataset.id}`
+    let computer = computerPlay();
+    playRound(player, computer);
+    if(playerScore === 5 || computerScore === 5) {
+        announceWinner();
+        finishGame();
+    }
+}));
+
+
+
+function announceWinner() {
+    const div = document.querySelector('.winner');
+    const winner = document.createElement('p');
+    if(playerScore > computerScore) {
+        winner.textContent = 'CONGRATURATIONS! YOU WON!';
+        div.appendChild(winner);
+    } else {
+        winner.textContent = 'OH NO! YOU LOST!';
+        div.appendChild(winner);
+    }
+}
+
+function finishGame() {
+    const buttons = document.querySelectorAll('.btn');
+    for(btn of buttons) {
+        btn.setAttribute('disabled', 'true');
+    }
+}
 
 // helper functions
 function capitalise(str) {
